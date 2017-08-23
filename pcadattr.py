@@ -6,6 +6,7 @@ from datetime import datetime
 import re, os, sys
 from io import StringIO
 import contextlib
+import logging
 
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -20,6 +21,9 @@ try:
     base_path = sys._MEIPASS
 except Exception:
     base_path = os.path.dirname(os.path.realpath(__file__))
+
+#Надеюсь, что эту строку гед-то здесь
+logging.basicConfig(format = u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.INFO)
 
 def Sandbox(code,obj):
     old_stdout = sys.stdout
@@ -77,6 +81,7 @@ class MainWindow(QMainWindow):
         Ui_MainWindow, QtBaseClass = uic.loadUiType(os.path.join(base_path,"main.ui"))
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.settings = QSettings("settingsDemo.conf")
         self.fdata = [] #readed array
         self.ui.listWidget.itemClicked.connect(self.showComent)
         self.execfuncs()
@@ -120,7 +125,8 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def on_pushButton_clicked(self):
         if not self.ui.lineEdit_out.text() or not self.ui.lineEdit_in.text():
-            print("empty")
+            # print("empty")
+            logging.info(u'empty')
             return
         new_file = QFileInfo(self.ui.lineEdit_out.text())
         if new_file.exists():
@@ -174,16 +180,25 @@ class MainWindow(QMainWindow):
                 #add CheckBox
                 item = QListWidgetItem(name.split(".")[0])
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                item.setCheckState(Qt.Unchecked)
+                # item.setCheckState(Qt.Unchecked)
+                is_set = int(self.settings.value(name.split(".")[0]))
+                if is_set == 1:
+                    item.setCheckState(Qt.Checked)
+                else:
+                    item.setCheckState(Qt.Unchecked)
                 self.ui.listWidget.addItem(item)
         self.fdata = fdata
 
+    @pyqtSlot()
     def checkFunction (self):
         for x in range(self.ui.listWidget.count()):
             fun = self.ui.listWidget.item(x)
             if fun.checkState() == Qt.Checked:
                 exec('self.'+fun.text()+"(self)")
-                #Sandbox('obj.'+fun.text()+"(obj)",self)
+                self.settings.setValue(fun.text(), "1")
+            else: 
+                self.settings.setValue(fun.text(),"0")
+
 
     def addTable(self, a, tabname = "", columnName=[],rowName=[]):
         # Create table
@@ -217,6 +232,10 @@ class MainWindow(QMainWindow):
             else:
                 return 
 
+    def keyPressEvent(self,event):     
+        if event.key()==Qt.Key_F5:
+            self.ui.listWidget.clear()
+            self.execfuncs()
 
 if __name__ == '__main__':
 
