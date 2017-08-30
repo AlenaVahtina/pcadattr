@@ -25906,7 +25906,7 @@ ACCEL_ASCII "D:\PCB\RABOTA17\OIYAI5\GEM_v2_SB.pcb"
     (solderSwell 0.01 )
     (pasteSwell 0.0 )
     (planeSwell 0.508 )
-    (refPointSize 1.0 )
+    (refPointSize 0.5 )
     (infoPointSize 2.54 )
     (gluePointSize 0.5 )
     (pickPointSize 0.8 )

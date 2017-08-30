@@ -25,6 +25,7 @@ def pnp_adding(self):
                 dpads+=1
             else:
                 spads+=1
+            self.logger.info('SMALL_LOG')
             shape = find(dd, 'padShape',['layerNumRef', '1'])
             dx=mfloat(find(shape,"shapeWidth")[1])/2;
             dy=mfloat(find(shape,"shapeHeight")[1])/2;

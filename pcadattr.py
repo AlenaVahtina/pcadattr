@@ -23,9 +23,9 @@ except Exception:
     base_path = os.path.dirname(os.path.realpath(__file__))
 
 #Надеюсь, что эту строку гед-то здесь
-logging.basicConfig(format = u'%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.INFO)
+#logging.basicConfig(format = '%(funcName)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.INFO)
 
-def Sandbox(code,obj):
+def Sandbox(code,self):
     old_stdout = sys.stdout
     old_stderr = sys.stderr
     redirected_output = sys.stdout = StringIO()
@@ -33,11 +33,22 @@ def Sandbox(code,obj):
 
     ns_globals = {}
     ns_locals = {}
-    out, err, exc = None, None, None
+    out, err, exc = "","", ""
+    # logging.basicConfig(format = '%(funcName)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.INFO)
+    # logger.addHandler(logging.StreamHandler(sys.stdout))
+    self.logger = logging.getLogger("test")
+
+    formatter = logging.Formatter('%(funcName)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s')
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(formatter)
+
+    self.logger.setLevel(logging.DEBUG)
+    self.logger.addHandler(handler)
 
     try:
         #print(code)
-        exec(code, ns_globals, ns_locals)
+        exec(code)
+        # exec(code, ns_globals, ns_locals)
     except:
         import traceback
         exc = traceback.format_exc()
@@ -48,7 +59,7 @@ def Sandbox(code,obj):
     # reset outputs to the original values
     sys.stdout = old_stdout
     sys.stderr = old_stderr
-    print(out)
+    
 
     return out, err, exc
 
@@ -126,7 +137,7 @@ class MainWindow(QMainWindow):
     def on_pushButton_clicked(self):
         if not self.ui.lineEdit_out.text() or not self.ui.lineEdit_in.text():
             # print("empty")
-            logging.info(u'empty')
+            logging.info('empty')
             return
         new_file = QFileInfo(self.ui.lineEdit_out.text())
         if new_file.exists():
@@ -181,7 +192,7 @@ class MainWindow(QMainWindow):
                 item = QListWidgetItem(name.split(".")[0])
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
                 # item.setCheckState(Qt.Unchecked)
-                is_set = int(self.settings.value(name.split(".")[0]))
+                is_set = int(self.settings.value(name.split(".")[0],0))
                 if is_set == 1:
                     item.setCheckState(Qt.Checked)
                 else:
@@ -194,7 +205,10 @@ class MainWindow(QMainWindow):
         for x in range(self.ui.listWidget.count()):
             fun = self.ui.listWidget.item(x)
             if fun.checkState() == Qt.Checked:
-                exec('self.'+fun.text()+"(self)")
+                a,b,c = Sandbox('self.'+fun.text()+"(self)", self)
+                print("'"+a+"'")
+                print ("'"+b+"'")
+                print ("'"+c+"'")
                 self.settings.setValue(fun.text(), "1")
             else: 
                 self.settings.setValue(fun.text(),"0")
