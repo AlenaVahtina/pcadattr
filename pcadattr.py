@@ -236,6 +236,7 @@ class MainWindow(QMainWindow):
             for element in range(len(a[row])):
                 table.setItem(row,element, QTableWidgetItem(a[row][element]))
 
+
     @pyqtSlot(QListWidgetItem)
     def showComent (self, item):
         self.ui.plainTextEdit.clear()
@@ -250,6 +251,17 @@ class MainWindow(QMainWindow):
         if event.key()==Qt.Key_F5:
             self.ui.listWidget.clear()
             self.execfuncs()
+
+
+    def addLogTab(self,a,b,c)
+        tabEdit = self.ui.lineEdit_in
+        self.ui.tabWidget.addTab(tabEdit,"logging")
+        if tabEdit.text()!="":
+            for :
+                tabEdit.setText()
+                tabEdit.setText()
+                tabEdit.setText()
+
 
 if __name__ == '__main__':
 
