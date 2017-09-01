@@ -143,6 +143,8 @@ class MainWindow(QMainWindow):
         if new_file.exists():
             if(QMessageBox.information(self, "Converter","Output file already exists. Are you sure you want to continue?", QMessageBox.Ok|QMessageBox.Cancel)==QMessageBox.Cancel):
                 return
+        for index in range(1,self.ui.tabWidget.count()):
+            self.ui.tabWidget.removeTab(1)
         self.readfile()
         self.checkFunction()
         self.writefile()
@@ -210,6 +212,9 @@ class MainWindow(QMainWindow):
                 print ("'"+b+"'")
                 print ("'"+c+"'")
                 self.settings.setValue(fun.text(), "1")
+                self.addLogTab(a,b)
+                if c!="":
+                    self.setErrorMsg(c)
             else: 
                 self.settings.setValue(fun.text(),"0")
 
@@ -253,14 +258,21 @@ class MainWindow(QMainWindow):
             self.execfuncs()
 
 
-    def addLogTab(self,a,b,c)
-        tabEdit = self.ui.lineEdit_in
+    def addLogTab(self, a, b):
+        tabEdit = QTextBrowser()
         self.ui.tabWidget.addTab(tabEdit,"logging")
-        if tabEdit.text()!="":
-            for :
-                tabEdit.setText()
-                tabEdit.setText()
-                tabEdit.setText()
+        tabEdit.setText(a+b)
+
+
+    def setErrorMsg(self, c):
+        self.msg = QMessageBox()
+        self.msg.setStyleSheet("QLabel{min-width:500 px; font-size: 24px;} QPushButton{ width:250px; font-size: 18px; }")
+        self.msg.setIcon(QMessageBox.Critical)
+        self.msg.setText("Fatal error")
+        self.msg.setWindowTitle("Error")
+        self.msg.setDetailedText("The details are as follows:"+c)
+        self.msg.show()
+
 
 
 if __name__ == '__main__':

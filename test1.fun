@@ -3,3 +3,4 @@ def test1(self):
     sys.stderr.write('test')
     sys.stdout.write('be')
     self.logger.info('testbygbgb')
+    1/0
