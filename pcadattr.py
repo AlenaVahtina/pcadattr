@@ -266,9 +266,9 @@ class MainWindow(QMainWindow):
 
     def setErrorMsg(self, c):
         self.msg = QMessageBox()
-        self.msg.setStyleSheet("QLabel{min-width:500 px; font-size: 24px;} QPushButton{ width:250px; font-size: 18px; }")
+        self.msg.setStyleSheet("QLabel{width:250 px; font-size: 16px;} QPushButton{ width:350px;} ")
         self.msg.setIcon(QMessageBox.Critical)
-        self.msg.setText("Fatal error")
+        self.msg.setText("Fatal error. For more information, open the log tab or the date.log file")
         self.msg.setWindowTitle("Error")
         self.msg.setDetailedText("The details are as follows:"+c)
         self.msg.show()
