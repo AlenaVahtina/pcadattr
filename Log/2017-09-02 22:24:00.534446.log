@@ -1,0 +1,8 @@
+Паша укеша
+betest1[LINE:5]# INFO     [2017-09-02 22:24:00,534]  testbygbgb
+Traceback (most recent call last):
+  File "pcadattr.py", line 52, in Sandbox
+    exec(code)
+  File "<string>", line 1, in <module>
+  File "<string>", line 6, in test1
+ZeroDivisionError: division by zero

@@ -14,6 +14,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtNetwork import *
 from PyQt5.QtSvg import *
 from PyQt5 import uic
+from datetime import datetime
 
 #pyinstaller pcadattr.py --add-data "main.ui;." -y --onefile --windowed
 
@@ -22,8 +23,6 @@ try:
 except Exception:
     base_path = os.path.dirname(os.path.realpath(__file__))
 
-#Надеюсь, что эту строку гед-то здесь
-#logging.basicConfig(format = '%(funcName)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.INFO)
 
 def Sandbox(code,self):
     old_stdout = sys.stdout
@@ -34,8 +33,6 @@ def Sandbox(code,self):
     ns_globals = {}
     ns_locals = {}
     out, err, exc = "","", ""
-    # logging.basicConfig(format = '%(funcName)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s', level = logging.INFO)
-    # logger.addHandler(logging.StreamHandler(sys.stdout))
     self.logger = logging.getLogger("test")
 
     formatter = logging.Formatter('%(funcName)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s')
@@ -46,9 +43,7 @@ def Sandbox(code,self):
     self.logger.addHandler(handler)
 
     try:
-        #print(code)
         exec(code)
-        # exec(code, ns_globals, ns_locals)
     except:
         import traceback
         exc = traceback.format_exc()
@@ -193,7 +188,6 @@ class MainWindow(QMainWindow):
                 #add CheckBox
                 item = QListWidgetItem(name.split(".")[0])
                 item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                # item.setCheckState(Qt.Unchecked)
                 is_set = int(self.settings.value(name.split(".")[0],0))
                 if is_set == 1:
                     item.setCheckState(Qt.Checked)
@@ -204,19 +198,18 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def checkFunction (self):
+        logFile= open('Log/'+str(datetime.now())+'.log', 'w')
         for x in range(self.ui.listWidget.count()):
             fun = self.ui.listWidget.item(x)
             if fun.checkState() == Qt.Checked:
                 a,b,c = Sandbox('self.'+fun.text()+"(self)", self)
-                print("'"+a+"'")
-                print ("'"+b+"'")
-                print ("'"+c+"'")
                 self.settings.setValue(fun.text(), "1")
                 self.addLogTab(a,b)
                 if c!="":
                     self.setErrorMsg(c)
             else: 
                 self.settings.setValue(fun.text(),"0")
+        logFile.write(a+c)
 
 
     def addTable(self, a, tabname = "", columnName=[],rowName=[]):
